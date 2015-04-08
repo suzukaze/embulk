@@ -120,7 +120,7 @@ chmod +x ~/.embulk/bin/embulk
 echo 'export PATH=&quot;$HOME/.embulk/bin:$PATH&quot;' &gt;&gt; ~/.bashrc
 source ~/.bashrc</code></pre>
 
-<p>Next step: <a href="#trying-examples">Trying examples</a></p>
+<p>Next step: <a href="#trying-the-example">Trying the example</a></p>
 
 <h3 id="label-Windows">Windows</h3>
 
@@ -131,9 +131,9 @@ href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java</
 
 <pre class="code ruby"><code class="ruby">PowerShell -Command &quot;&amp; {Invoke-WebRequest https://bintray.com/artifact/download/embulk/maven/embulk-0.6.0.jar -OutFile embulk.bat}&quot;</code></pre>
 
-<p>Next step: <a href="#trying-examples">Trying examples</a></p>
+<p>Next step: <a href="#trying-the-example">Trying the example</a></p>
 
-<h3 id="label-Trying+examples">Trying examples</h3>
+<h3 id="label-Trying+the+example">Trying the example</h3>
 
 <p>Let's load a CSV file, for example. <code>embulk example</code> subcommand
 generates a csv file and config file for you.</p>
@@ -148,15 +148,32 @@ embulk run     config.yml</code></pre>
 <h3 id="label-Using+plugins">Using plugins</h3>
 
 <p>You can use plugins to load data from/to various systems and file formats.
-An example is <a
-href="https://github.com/frsyuki/embulk-output-postgres-json">embulk-output-postgres-json</a>
-plugin. It outputs data into PostgreSQL server using "json" column type.</p>
+Here is the list of publicly released plugins: <a
+href="http://www.embulk.org/plugins/">list of plugins by category</a>.</p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_embulk'>embulk</span> <span class='id identifier rubyid_gem'>gem</span> <span class='id identifier rubyid_install'>install</span> <span class='id identifier rubyid_embulk'>embulk</span><span class='op'>-</span><span class='id identifier rubyid_output'>output</span><span class='op'>-</span><span class='id identifier rubyid_postgres'>postgres</span><span class='op'>-</span><span class='id identifier rubyid_json'>json</span>
+<p>An example is <a
+href="https://github.com/embulk/embulk-output-command">embulk-output-command</a>
+plugin. It executes an external command to output the records.</p>
+
+<p>To install plugins, you can use <code>embulk gem install
+&lt;name&gt;</code> command:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_embulk'>embulk</span> <span class='id identifier rubyid_gem'>gem</span> <span class='id identifier rubyid_install'>install</span> <span class='id identifier rubyid_embulk'>embulk</span><span class='op'>-</span><span class='id identifier rubyid_output'>output</span><span class='op'>-</span><span class='id identifier rubyid_command'>command</span>
 <span class='id identifier rubyid_embulk'>embulk</span> <span class='id identifier rubyid_gem'>gem</span> <span class='id identifier rubyid_list'>list</span></code></pre>
 
-<p>You can find plugins at the <a href="http://www.embulk.org/plugins/">list
-of plugins by category</a>.</p>
+<p>Embulk bundles some built-in plugins such as
+<code>embulk-encoder-gzip</code> or <code>embulk-formatter-csv</code>. You
+can use those plugins with following configuration file:</p>
+
+<pre class="code ruby"><code class="ruby">in:
+  # ...
+out:
+  type: command
+  command: &quot;cat - &gt; task.$INDEX.$SEQID.csv.gz&quot;
+  encoders:
+    - {type: gzip}
+  formatter:
+    type: csv</code></pre>
 
 <h3 id="label-Using+plugin+bundle">Using plugin bundle</h3>
 
@@ -261,7 +278,7 @@ to acquire bintray API Keys</a></p>
 </div></div>
 
     <div id="footer">
-  Generated on Wed Apr  8 06:18:03 2015 by
+  Generated on Wed Apr  8 18:44:44 2015 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.6 (ruby-1.9.3).
 </div>
