@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Release 0.6.0 &mdash; Embulk 0.5 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/haiku.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Embulk 0.5 documentation" href="../index.html" />
+    <link rel="up" title="Release Notes" href="../release.html" />
+    <link rel="next" title="Release 0.5.5" href="release-0.5.5.html" />
+    <link rel="prev" title="Release Notes" href="../release.html" /> 
+  </head>
+  <body role="document">
+      <div class="header" role="banner"><h1 class="heading"><a href="../index.html">
+          <span>Embulk 0.5 documentation</span></a></h1>
+        <h2 class="heading"><span>Release 0.6.0</span></h2>
+      </div>
+      <div class="topnav" role="navigation" aria-label="top navigation">
+      
+        <p>
+        «&#160;&#160;<a href="../release.html">Release Notes</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="release-0.5.5.html">Release 0.5.5</a>&#160;&#160;»
+        </p>
+
+      </div>
+      <div class="content">
+        
+        
+  <div class="section" id="release-0-6-0">
+<h1>Release 0.6.0<a class="headerlink" href="#release-0-6-0" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="executor-plugin-mechanism">
+<h2>Executor Plugin Mechanism<a class="headerlink" href="#executor-plugin-mechanism" title="Permalink to this headline">¶</a></h2>
+<p>Now executor of Embulk is fully extensible using plugins. Executor plugins get input, filter and output plugins from the Embulk framework and runs them using multiple threads, processes, or servers. While input, filter and output plugins are response for data processing, executor plugins are responsible for scheduling the processing tasks and managing parallelism for performance.</p>
+<p>The built-in executor plugin is <code class="docutils literal"><span class="pre">LocalExecutorPlugin</span></code> that runs tasks using multiple threads. It has a shared thread pool and schedules tasks at most <code class="docutils literal"><span class="pre">(number</span> <span class="pre">of</span> <span class="pre">available</span> <span class="pre">CPU</span> <span class="pre">cores)</span> <span class="pre">*</span> <span class="pre">2</span></code> tasks in parallel. Number of threads is configurable using <code class="docutils literal"><span class="pre">max_threads</span></code> system parameter.</p>
+<p>Another available executor is <a class="reference external" href="https://github.com/embulk/embulk-executor-mapreduce">embulk-executor-mapreduce</a> plugin. This executor plugin runs tasks on Hadoop, a distributed computing environment. It is suitable for processing TBs of data. An unique functionality is that it supports partitioning data by a certain column before passing them to output plugins. An example use case is that the MapReduce executor partitions data by time so that files on destination storage are partitioned for each day.</p>
+</div>
+<div class="section" id="plugin-api">
+<h2>Plugin API<a class="headerlink" href="#plugin-api" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">exec.LocalExecutor</span></code> class is separated into <code class="docutils literal"><span class="pre">exec.BulkLoader</span></code> class for interface definition and <code class="docutils literal"><span class="pre">exec.LocalExecutorPlugin</span></code> for implementation. If you&#8217;re application is Embulk through <code class="docutils literal"><span class="pre">LocalExecutor</span></code> class, you need to replace it with <code class="docutils literal"><span class="pre">BulkLoader</span></code>.</li>
+<li><code class="docutils literal"><span class="pre">spi.ExecAction#run</span></code> can throw <code class="docutils literal"><span class="pre">Exception</span></code> and <code class="docutils literal"><span class="pre">Exec.doWith(ExecSession,</span> <span class="pre">ExecAction&lt;T&gt;)</span></code> throws <code class="docutils literal"><span class="pre">ExecutionException</span></code>.</li>
+<li><code class="docutils literal"><span class="pre">spi.Buffer</span></code> implements <code class="docutils literal"><span class="pre">#equals</span></code> and <code class="docutils literal"><span class="pre">hashCode</span></code> methods.</li>
+</ul>
+</div>
+<div class="section" id="plugin-spi">
+<h2>Plugin SPI<a class="headerlink" href="#plugin-spi" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Added <code class="docutils literal"><span class="pre">spi.ExecutorPlugin</span></code> interface.</li>
+<li>Added <code class="docutils literal"><span class="pre">Embulk::ExecutorPlugin</span></code> class.</li>
+</ul>
+</div>
+<div class="section" id="general-changes">
+<h2>General Changes<a class="headerlink" href="#general-changes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>If there are no input tasks, the transaction is committed successfully rather than making it failed.</li>
+</ul>
+</div>
+<div class="section" id="release-date">
+<h2>Release Date<a class="headerlink" href="#release-date" title="Permalink to this headline">¶</a></h2>
+<p>2015-04-07</p>
+</div>
+</div>
+
+
+      </div>
+      <div class="bottomnav" role="navigation" aria-label="bottom navigation">
+      
+        <p>
+        «&#160;&#160;<a href="../release.html">Release Notes</a>
+        &#160;&#160;::&#160;&#160;
+        <a class="uplink" href="../index.html">Contents</a>
+        &#160;&#160;::&#160;&#160;
+        <a href="release-0.5.5.html">Release 0.5.5</a>&#160;&#160;»
+        </p>
+
+      </div>
+
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015, Embulk Project.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>
